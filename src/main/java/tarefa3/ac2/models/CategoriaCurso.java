@@ -26,6 +26,6 @@ public class CategoriaCurso {
     private Long id;
     @Column(nullable = false)
     private String nome;
-    @OneToMany
+    @OneToMany(mappedBy = "categoriaCurso")
     private List<Curso> cursos;
 }

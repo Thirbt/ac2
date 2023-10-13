@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import tarefa3.ac2.dtos.CategoriaCursoDTO;
-import tarefa3.ac2.models.CategoriaCurso;
+import tarefa3.ac2.dtos.CategoriaCursoInserirDTO;
 import tarefa3.ac2.services.CategoriaCursoService;
 
 @RestController
@@ -34,7 +34,7 @@ public class CategoriaCursoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoriaCurso inserir(@RequestBody CategoriaCursoDTO categoriaCursoDTO) {
+    public CategoriaCursoInserirDTO inserir(@RequestBody CategoriaCursoInserirDTO categoriaCursoDTO) {
         return categoriaCursoService.inserir(categoriaCursoDTO);
     }
 
@@ -44,7 +44,7 @@ public class CategoriaCursoController {
     }
 
     @PutMapping("{id}")
-    public CategoriaCurso editar(@PathVariable Long id, @RequestBody CategoriaCursoDTO categoriaCursoDTO) {
+    public CategoriaCursoDTO editar(@PathVariable Long id, @RequestBody CategoriaCursoDTO categoriaCursoDTO) {
        return categoriaCursoService.editar(id, categoriaCursoDTO);
     }
 

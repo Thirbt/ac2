@@ -6,7 +6,9 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import tarefa3.ac2.dtos.CursoDTO;
+import tarefa3.ac2.dtos.CursoInserirDTO;
 import tarefa3.ac2.exceptions.GeneralException;
+import tarefa3.ac2.mappers.CursoMapper;
 import tarefa3.ac2.models.CategoriaCurso;
 import tarefa3.ac2.models.Curso;
 import tarefa3.ac2.repositories.CategoriaCursoRepository;
@@ -42,14 +44,19 @@ public class CursoService implements CursoServiceContract{
     }
 
     @Override
-    public Curso inserir(CursoDTO cursoDTO) {
+    public CursoInserirDTO inserir(CursoInserirDTO cursoDTO) {
+
         CategoriaCurso categoriaCurso = categoriaCursoRepository.findByNome(cursoDTO.getNomeCategoriaCurso()).orElseThrow(() -> new GeneralException("Não foi possível encontrar a categoria pelo nome!."));
-        Curso curso = new Curso();
-        curso.setId(null);
-        curso.setNome(cursoDTO.getNome());
-        curso.setCargaHoraria(cursoDTO.getCargaHoraria());
-        curso.setCategoriaCurso(categoriaCurso);
-        return cursoRepository.save(curso);
+
+        CursoInserirDTO curso = CursoInserirDTO.builder()
+                        .nome(cursoDTO.getNome())
+                        .cargaHoraria(cursoDTO.getCargaHoraria())
+                        .nomeCategoriaCurso(cursoDTO.getNomeCategoriaCurso())
+                        .build();
+
+        cursoRepository.save(CursoMapper.convertCursoInserirDTOToEntity(cursoDTO, categoriaCurso));
+
+        return curso;
     }
 
     @Override
@@ -68,19 +75,26 @@ public class CursoService implements CursoServiceContract{
     }
 
     @Override
-    public Curso editar(Long id, CursoDTO cursoDTO) {
+    public CursoDTO editar(Long id, CursoDTO cursoDTO) {
         CursoDTO oldCurso = this.obterPorId(id);
+
         CategoriaCurso categoriaCurso = categoriaCursoRepository.findByNome(cursoDTO.getNomeCategoriaCurso()).orElseThrow(() -> new GeneralException("Não foi possível encontrar a categoria pelo nome!."));
-        Curso curso = new Curso();
-        curso.setId(oldCurso.getId());
-        curso.setNome(oldCurso.getNome());
-        curso.setCargaHoraria(oldCurso.getCargaHoraria());
-        curso.setCategoriaCurso(categoriaCurso);
-        return cursoRepository.save(curso);
+
+        CursoDTO curso = CursoDTO.builder()
+                        .id(oldCurso.getId())
+                        .nome(cursoDTO.getNome())
+                        .cargaHoraria(cursoDTO.getCargaHoraria())
+                        .nomeCategoriaCurso(categoriaCurso.getNome())
+                        .build();
+
+        cursoRepository.save(CursoMapper.convertCursoDTOToEntity(cursoDTO, categoriaCurso, oldCurso.getId()));
+
+        return curso;
     }
 
     @Override
     public void excluir(Long id) {
         this.cursoRepository.deleteById(id);
     }
+
 }
